@@ -3,9 +3,6 @@ services:
     image: photo_viewer
     # 内存限制
     mem_limit: 512m
-    privileged: true
-    cap_add:
-      - SYS_ADMIN
     environment:
       - TZ=Asia/Shanghai
       # 随机密钥，用于加密session，请自行更换

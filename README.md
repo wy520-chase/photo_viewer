@@ -12,7 +12,7 @@ cd photo_viewer
 docker build -t photo_viewer .
 ```
 
-### 3、按需修改docker-compose.yml中的密钥、密码和图片位置
+### 3、按需修改docker-compose.yml中的密钥、密码、图片位置和端口等信息
 
 ### 4、启动容器
 

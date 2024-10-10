@@ -3,11 +3,14 @@
 ## 部署步骤：
 ### 1、拉取项目
 
-`git pull https://github.com/wy520-chase/photo_viewer.git`
+`git clone https://github.com/wy520-chase/photo_viewer.git`
 
 ### 2、创建容器
 
-`docker build -t photo_viewer .`
+```
+cd photo_viewer
+docker build -t photo_viewer .
+```
 
 ### 3、按需修改docker-compose.yml中的密钥、密码和图片位置
 

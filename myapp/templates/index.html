@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>images</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css', v=timestamp) }}">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
+</head>
+<body>
+    <div class="container">
+        <div class="sub-container">
+        {% for index in range(0, items|length) %}
+        <div class="item">
+
+                {% if items[index]['preview_image'] %}
+                    <a href="{{ url_for('index.index', url_path=items[index]['path'])}}?from_viewer={{from_viewer}}&v={{timestamp}}">
+                    <div class="placeholder hidden" data-aspect-ratio="{{ items[index]['preview_image']['aspect_ratio'] }}"></div>
+                    <img data-src="{{ url_for('index.index', url_path=items[index]['preview_image']['path'] ~ '?v=' ~ timestamp) }}" alt="预览图片" class="lazy">
+                    <p class="text-folder hidden">{{ items[index]['name']|default('No Name Provided') }}</p></a>
+                {% else %}
+                    {% if items[index]['is_pic'] %}
+                        {% if from_viewer %}
+                            <a href="{{ url_for('image_viewer.image_viewer', image_path=items[index]['path'] ~ '?v=' ~ timestamp) }}"
+                               onclick="event.preventDefault(); navigateTo(this.href);">
+                                <div class="placeholder hidden" data-aspect-ratio="{{ items[index]['aspect_ratio'] }}"></div>
+                                <img data-src="{{ url_for('index.index', url_path=items[index]['path'] ~ '?v=' ~ timestamp) }}" alt="预览图片" class="lazy">
+                                <p class="text-pic hidden">{{ items[index]['name'] }}</p>
+                            </a>
+                        {% else %}
+                            <a href="{{ url_for('image_viewer.image_viewer', image_path=items[index]['path'] ~ '?v=' ~ timestamp) }}">
+                                <div class="placeholder hidden" data-aspect-ratio="{{ items[index]['aspect_ratio'] }}"></div>
+                                <img data-src="{{ url_for('index.index', url_path=items[index]['path'] ~ '?v=' ~ timestamp) }}" alt="预览图片" class="lazy">
+                                <p class="text-pic hidden">{{ items[index]['name'] }}</p>
+                            </a>
+                        {% endif %}
+                    {% endif %}
+                {% endif %}
+        </div>
+        {% endfor %}
+        </div>
+        <div class="sub-container">
+        </div>
+        <div class="sub-container">
+        </div>
+    </div>
+    <a href="{{ url_for('settings.settings') }}" class="settings-button">
+        ⚙️
+    </a>
+    <script>
+        const items = {{ items|tojson|safe }};
+    </script>
+    <script src="{{ url_for('static', filename='js/scripts.js', v=timestamp) }}"></script>
+</body>
+</html>

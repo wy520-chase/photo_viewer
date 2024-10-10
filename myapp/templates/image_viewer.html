@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ folder_name }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/image_viewer.css', v=timestamp) }}">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
+</head>
+<body>
+    <div class="image-container" id="imageContainer">
+        <img src="" alt="Left Image" class="image" id="leftImage">
+        <div class="image-container">
+            <img src="" alt="Current Image" class="image" id="currentImage">
+            <div class="message visible" id="Message">消息文本</div>
+            <div class="option-bar hidden" id="optionBar">
+                <div class="top-bar-left">
+                    <div class="filename" id="filename"></div>
+                </div>
+                <div class="top-bar-right" id="topBarRight">
+                    <button class="top-bar-button delete" id="deleteButton">🗑</button>
+                    <button class="top-bar-button sub-option" id="subOptionButton">⋮</button>
+                    <button class="top-bar-button carouse" id="carouselButton">▶</button>
+                </div>
+            </div>
+        </div>
+        <img src="" alt="Right Image" class="image" id="rightImage">
+    </div>
+    <script> // 将模板变量的值注入全局变量
+        const imagesJson = {{ images_json|tojson|safe}};
+        let folderName = "{{ folder_name }}"
+        let currentImageIndex = {{ current_image_index }};
+        let carousingFromServer = {{ carousing|default('false', true) | tojson }};
+        const carousing = carousingFromServer === true;
+        let CarouselFps = "{{ carousel_fps }}";
+        console.log('carousing=',carousing, ';CarouselFps=', CarouselFps)
+    </script>
+    <script src="{{ url_for('static', filename='js/image_viewer.js', v=timestamp) }}"></script>
+</body>
+</html>

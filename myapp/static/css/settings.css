@@ -1,0 +1,60 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f9;
+    height: 100%;          /* 设置 body 和 html 的高度为100% */
+    width: 100%;
+    margin: 0;             /* 移除默认的外边距 */
+    padding: 0;            /* 移除默认的内边距 */
+    touch-action: pan-y; /* 允许垂直滚动 */
+}
+
+.header {
+    position: relative;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.logout-button, .back-button {
+    position: absolute;
+    top: 20px;
+    text-decoration: none;
+    color: #555;
+    border: 1px solid #ddd;
+    padding: 8px 16px;
+    border-radius: 4px;
+    background-color: #fff;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.back-button {
+    left: 20px;
+}
+
+.logout-button {
+    right: 20px;
+}
+
+.logout-button:hover, .back-button:hover {
+    background-color: #f8f8f8;
+    color: #000;
+}
+
+.content {
+    padding: 60px 20px;
+    text-align: center;
+}
+
+.content h1 {
+    margin-bottom: 20px;
+    font-size: 32px;
+    color: #333;
+}
+
+.content p {
+    font-size: 18px;
+    color: #666;
+    line-height: 1.6;
+}

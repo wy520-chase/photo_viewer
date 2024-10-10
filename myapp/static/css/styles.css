@@ -1,0 +1,129 @@
+body, html {
+    background-color: rgba(151, 162, 232, 0.1); /* 半透明的白色背景增加层次感 */
+    height: 100%;          /* 设置 body 和 html 的高度为100% */
+    margin: 0;             /* 移除默认的外边距 */
+    padding: 0;            /* 移除默认的内边距 */
+    touch-action: pan-y; /* 允许垂直滚动 */
+}
+
+.container {
+    background-color: rgba(151, 162, 232, 0.2); /* 半透明的白色背景增加层次感 */
+    width: 100%;          /* 容器宽度设为100% */
+    padding: 1%;          /* 预留1%的内边距 */
+    box-sizing: border-box; /* 确保padding不超出容器边界 */
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    box-sizing: border-box;
+}
+
+
+.sub-container, .folders, .item {
+    background-color: transparent;
+}
+
+.sub-container {
+    flex: 0 0 calc(50% - 5px); /* 每个 sub-container 占一半宽度 */
+    display: flex;
+    flex-direction: column;
+}
+
+
+.item {
+    width: 100%; /* 确保项占满父容器 */
+    margin: 5px 0;
+    box-sizing: border-box;
+    border-radius: 10px;
+    flex: 0 0 auto; /* 自适应高度 */
+    font-size: 16px; /* 恢复字体大小 */
+    position: relative; /* 使内部元素使用绝对定位 */
+    box-sizing: border-box;
+    overflow: hidden; /* 确保未加载图片时不会撑开 */
+}
+
+
+.placeholder {
+    background: transparent; /* 背景透明 */
+    border: none; /* 移除边框 */
+    opacity: 0; /* 完全透明 */
+    pointer-events: none; /* 防止点击事件影响 */
+}
+
+/* 媒体查询 */
+@media (orientation: landscape), (aspect-ratio >= 1) {
+    .container {
+        flex-wrap: nowrap;
+        justify-content: flex-start;
+    }
+
+    .sub-container {
+        flex: 0 0 calc(33.333% - 5px); /* 在更宽的屏幕上每行显示三个 item */
+        margin: 0 5px;
+    }
+}
+
+
+.item img {
+    width: 100%;
+    height: auto; /* 确保图片按比例放缩 */
+    display: block;
+    transition: opacity 0.3s ease-in-out;
+    opacity: 0; /* 初始设置为透明 */
+}
+
+
+.item img.loaded {
+    opacity: 1;
+}
+
+.hidden {
+    background: transparent; /* 背景透明 */
+    border: none; /* 移除边框 */
+    opacity: 0; /* 完全透明 */
+    pointer-events: none; /* 防止点击事件影响 */
+}
+
+
+.text-folder,
+.text-pic {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 10px;
+    text-align: center;
+    margin: 0; /* 移除默认外边距 */
+    font-size: calc(100vw / 24);
+    line-height: 1.5; /* 增加行距以便更好阅读 */
+    box-sizing: border-box;
+    word-wrap: break-word; /* 避免超出边界的长单词 */
+    overflow: hidden; /* 避免文字溢出容器 */
+}
+
+.text-folder {
+    color: #FF4500; /* 橘红色强调色 */
+    background: rgba(0, 0, 0, 0.5); /* 半透明的黑色 */
+}
+
+.text-pic {
+    color: rgba(255, 255, 255, 0); /* 完全透明的白色字体 */
+    background: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0)); /* 半透明的渐变背景 */
+}
+
+.settings-button {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #fff;
+    border: solid 1px #ccc;
+    border-radius: 50%;
+    padding: 10px;
+    text-decoration: none;
+    font-size: 24px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    transition: background-color 0.3s;
+}
+
+.settings-button:hover {
+    background-color: #f0f0f0;
+}

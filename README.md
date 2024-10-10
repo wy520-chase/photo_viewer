@@ -3,7 +3,7 @@
 ## 部署步骤：
 ### 1、拉取项目
 
-`git pull https://github.com/wy520-chase/photo_viewer`
+`git pull https://github.com/wy520-chase/photo_viewer.git`
 
 ### 2、创建容器
 

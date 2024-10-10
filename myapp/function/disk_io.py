@@ -2,7 +2,7 @@ import os
 
 from flask import Blueprint, request, jsonify
 from flask_login import login_required
-
+from myapp.config import root
 from myapp.function.basic import app_logger
 from PIL import Image
 from myapp.function.maintain_file_tree import get_cached_info, FileTree

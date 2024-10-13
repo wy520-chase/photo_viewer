@@ -1,0 +1,22 @@
+services:
+  container:
+    image: photo_viewer
+    # 内存限制
+    mem_limit: 512m
+    environment:
+      - TZ=Asia/Shanghai
+      # 随机密钥，用于加密session，请自行更换
+      - SECRET_KEY=12345678
+      # 登录名
+      - USER_NAME=admin
+      # 密码
+      - PASSWORD=admin
+    volumes:
+      # 程序文件映射到容器，默认无需更改
+      - ${PWD}/myapp:/app/myapp
+      # 图片文件映射到容器，如${PWD}/images
+      - your_path_of_images:/app/myapp/static/images
+
+    ports:
+      - "8000:8000"
+    command: sh -c "gunicorn -w 4 -b 0.0.0.0:8000 myapp.app:app --preload"

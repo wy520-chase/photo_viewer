@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/settings.css', v=timestamp) }}">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
+</head>
+<body>
+    <div class="header">
+        <a href="javascript:void(0);" onclick="history.back();" class="back-button">返回</a>
+        <a href="{{ url_for('login.logout') }}" class="logout-button">注销</a>
+    </div>
+    <div class="content">
+        <h1>帮助文档</h1>
+        <p>浏览页面左滑返回上一目录</p>
+        <p>图片查看页面点击文件名返回浏览图片所在文件夹</p>
+    </div>
+</body>
+</html>

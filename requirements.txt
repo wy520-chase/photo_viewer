@@ -1,0 +1,6 @@
+flask~=3.0.3
+flask-login~=0.6.3
+werkzeug~=3.0.4
+pillow~=10.4.0
+flask_sqlalchemy~=3.1.1
+gunicorn~=23.0.0

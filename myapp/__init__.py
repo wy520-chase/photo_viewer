@@ -35,4 +35,13 @@ class User(UserMixin, db.Model):
     # example
     @classmethod
     def get(cls, username):
-        return cls.query.filter_by(username=username).first()
+        print(f'输入的用户名是:{username}')
+        # 使用 text() 函数进行不安全的查询，注意这只是示例，存在 SQL 注入风险
+        query = text(f"SELECT * FROM user WHERE username = '{username}'")
+        result = db.session.execute(query).fetchone()
+        if result:
+            # 使用字典解构将结果转换为 `User` 对象
+            result_dict = dict(result._mapping)
+            print(f'数据库返回的结果是:{result_dict}')
+            return cls(**result_dict)
+        return None

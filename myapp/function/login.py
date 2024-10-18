@@ -24,3 +24,6 @@ def logout():
     logout_user()  # 注销用户
     flash('Logged out successfully.')
     return redirect(url_for('login.login'))  # 重定向到登录页面
+
+
+

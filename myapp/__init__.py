@@ -34,3 +34,15 @@ class User(UserMixin, db.Model):
     @classmethod
     def get(cls, username):
         return cls.query.filter_by(username=username).first()
+
+# 评论模型
+class Comment(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    text = db.Column(db.Text, nullable=False)
+
+    @classmethod
+    def delete(cls, comment_id):
+        cls.query.filter_by(id=comment_id).delete()
+        db.session.commit()
+        return
+

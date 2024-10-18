@@ -58,3 +58,62 @@ body {
     color: #666;
     line-height: 1.6;
 }
+
+.comments-section {
+
+    padding-top: 20px;
+    border-top: 1px solid #e0e0e0; /* 顶部分割线 */
+    display: flex;
+    justify-content: space-between;
+}
+
+.column {
+    width: 45%;
+}
+
+.column + .column {
+    border-left: 1px solid #e0e0e0; /* 左侧分割线 */
+    padding-left: 20px;
+}
+
+.comments-list ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.comments-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    padding: 0 60px;
+}
+
+.comment-form {
+    display: flex;
+    flex-direction: column;
+}
+
+.comment-form textarea,
+.comment-form button {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    width: 80%;
+    display: block;
+}
+.comment-form textarea {
+    display: flex;
+    height: 150px;  /* 设置文本区域的高度，例如150px */
+    margin-bottom: 10px;
+    resize: vertical;  /* 允许用户垂直调整高度 */
+}
+.delete-button {
+    background-color: transparent;
+    border: none;
+    color: red;
+    cursor: pointer;
+    font-size: 14px;
+}

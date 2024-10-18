@@ -16,6 +16,30 @@
         <h1>帮助文档</h1>
         <p>浏览页面左滑返回上一目录</p>
         <p>图片查看页面点击文件名返回浏览图片所在文件夹</p>
+
+        <div class="comments-section">
+            <div class="column comments-list">
+                <ul>
+                    {% for comment in comments[:(comments|length)] %}
+                        <li data-comment-id="{{ comment.id }}">
+                            <span>{{ comment.text | safe }}</span>
+                            <button class="delete-button">删除</button>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="column comment-form">
+                <h2>评论</h2>
+                <form action="{{ url_for('settings.settings') }}" method="post">
+                    <textarea name="comment" required></textarea>
+                    <button type="submit">提交</button>
+                </form>
+            </div>
+        </div>
+
     </div>
+
+<script src="{{ url_for('static', filename='js/settings.js', v=timestamp) }}"></script>
+
 </body>
 </html>

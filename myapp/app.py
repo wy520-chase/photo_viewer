@@ -6,7 +6,6 @@ from werkzeug.security import generate_password_hash
 from myapp.config import init_username, init_password
 from myapp import create_app, db, User
 from myapp.function.basic import app_logger
-from sqlalchemy import text
 
 app = create_app()
 # 初始化数据库，创建初始账户

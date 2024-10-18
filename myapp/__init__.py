@@ -1,7 +1,6 @@
 from flask import Flask
 from flask_login import UserMixin
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import text
 import time
 from myapp.function.disk_io import DiskIO
 from myapp.config import file_path, root, secret_key
@@ -32,7 +31,6 @@ class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(150), unique=True, nullable=False)
     password = db.Column(db.String(150), nullable=False)
-    # example
     @classmethod
     def get(cls, username):
         return cls.query.filter_by(username=username).first()

@@ -1,8 +1,12 @@
 自制网页图片浏览器，用于浏览nas上的图片 基于python flask实现，使用docker部署
 
 ## 预览图
-![image](https://github.com/user-attachments/assets/690db250-8066-4b62-8672-f74fb98ab751)
-![image](https://github.com/user-attachments/assets/a948f7fc-359f-4be3-9783-8728adc7eca8)
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/85c17de3-164b-48d6-9ac7-fb75e9db4565" alt="目录查看页面" width="40%">
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="https://github.com/user-attachments/assets/e603cb9f-ca05-4fcf-b524-dcb4011fcfad" alt="图片查看页面" width="40%">
+</p>
 
 ## 部署步骤：
 ### 1、拉取项目

@@ -1,4 +1,6 @@
-![image](https://github.com/user-attachments/assets/fc8b2d58-f346-4d76-9fe0-145514bd39a6)## 漏洞概述
+# 这是一个SQL注入测试和防范示例
+
+## 漏洞概述
 
 - **漏洞名称**：SQL 注入
 - **受影响组件**：用户名输入框

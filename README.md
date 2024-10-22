@@ -3,10 +3,11 @@
 ## 预览图
 
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/85c17de3-164b-48d6-9ac7-fb75e9db4565" alt="目录查看页面" width="40%">
+  <img src="https://github.com/user-attachments/assets/2794f6af-9e61-4fe3-9998-c936fd221e15" alt="目录查看页面" width="40%">
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
   <img src="https://github.com/user-attachments/assets/e603cb9f-ca05-4fcf-b524-dcb4011fcfad" alt="图片查看页面" width="40%">
 </p>
+
 
 ## 部署步骤：
 ### 1、拉取项目

@@ -26,6 +26,8 @@
 ### 测试结果
 
 - 提交恶意评论后，所有访问该页面的用户都会触发弹出的JavaScript警告框，确认了存储型XSS的存在。
+  ![image](https://github.com/user-attachments/assets/bdf3b30c-33bc-450e-a505-501c430b7766)
+
 
 ## 漏洞影响
 
@@ -43,7 +45,10 @@
 
 2. **输出转义**：
    - 在呈现用户生成的内容时，对HTML、JavaScript、URL进行适当的输出转义，防止脚本在浏览器中执行。
-   - 漏洞出现的直接原因是html页面展示评论时，使用了“<span>{{ comment.text | safe }}</span>”不对用户输入进行转义。
+   - 漏洞出现的直接原因是html页面展示评论时，使用了safe参数取消用户输入进行转义。
+   ```html
+   <span>{{ comment.text | safe }}</span>
+   ```
 
 3. **使用安全库**：
    - 利用安全库或框架提供的功能来处理输出转义和防范XSS的机制。

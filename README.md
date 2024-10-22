@@ -9,6 +9,10 @@
 
 测试代码仅供示范，在原始代码基础上去除了User类中的ORM框架，取消参数化查询和自动转义逻辑，执行最原始的SQL命令，且未对用户输入做校验。
 攻击者可以通过输入特制的SQL语句尝试绕过登录验证或窃取数据库信息。
+```
+   query = text(f"SELECT * FROM user WHERE username = '{username}'")
+   result = db.session.execute(query).fetchone()
+```
 
 ## 漏洞证明
 
@@ -36,10 +40,6 @@
 ## 修复建议
 
 1. **输入验证**：对用户输入进行严格的验证和过滤，确保输入仅包含有效字符。
-   ```
-   query = text(f"SELECT * FROM user WHERE username = '{username}'")
-        result = db.session.execute(query).fetchone()
-   ```
 2. **使用预编译语句**：采用参数化查询或预编译语句来避免SQL注入。safe_init.py提供了手工实现参数化查询的方式。
 3. **最小权限原则**：限制数据库账户的权限，使其只能执行必要操作。
 4. **安全审计**：定期进行代码审计和安全测试，确保及时发现和修复安全漏洞。

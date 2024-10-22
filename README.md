@@ -40,6 +40,10 @@
 ## 修复建议
 
 1. **输入验证**：对用户输入进行严格的验证和过滤，确保输入仅包含有效字符。
-2. **使用预编译语句**：采用参数化查询或预编译语句来避免SQL注入。safe_init.py提供了手工实现参数化查询的方式。
+2. **使用预编译语句**：采用参数化查询或预编译语句来避免SQL注入。如
+```
+   query = text("SELECT * FROM user WHERE username = :username")
+   result = db.session.execute(query, {'username': username}).fetchone()
+```
 3. **最小权限原则**：限制数据库账户的权限，使其只能执行必要操作。
 4. **安全审计**：定期进行代码审计和安全测试，确保及时发现和修复安全漏洞。

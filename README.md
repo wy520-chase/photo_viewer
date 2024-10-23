@@ -1,7 +1,6 @@
 一个使用CSP策略防范XSS的示例
 
-## 部署步骤：
-### 1、核心修改
+## 1、核心修改
 为所有内联脚本添加nonce
 ```
 def generate_nonce():
@@ -18,9 +17,9 @@ csp = (
         "img-src 'self' blob:; "
     ).format(nonce=g.nonce)
 ```
-### 2、效果验证
+## 2、效果验证
 攻击脚本未成功运行
 ![image](https://github.com/user-attachments/assets/bc5a0514-9042-495d-9eaf-b5e99f43968c)
 
-### 3、遗留问题
+## 3、遗留问题
 允许blob带来额外风险

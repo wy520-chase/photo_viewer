@@ -1,4 +1,7 @@
-from flask import Flask
+import base64
+import os
+
+from flask import Flask, g
 from flask_login import UserMixin
 from flask_sqlalchemy import SQLAlchemy
 import time
@@ -46,3 +49,5 @@ class Comment(db.Model):
         db.session.commit()
         return
 
+def generate_nonce():
+    g.nonce = base64.b64encode(os.urandom(16)).decode('utf-8')

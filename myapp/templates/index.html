@@ -47,7 +47,7 @@
     <a href="{{ url_for('settings.settings') }}" class="settings-button">
         ⚙️
     </a>
-    <script>
+    <script nonce="{{ nonce }}">
         const items = {{ items|tojson|safe }};
     </script>
     <script src="{{ url_for('static', filename='js/scripts.js', v=timestamp) }}"></script>

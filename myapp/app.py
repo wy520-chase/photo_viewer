@@ -1,10 +1,10 @@
-from flask import jsonify, make_response
+from flask import jsonify, make_response, g
 import time
 from flask_login import LoginManager
 from werkzeug.exceptions import BadRequest
 from werkzeug.security import generate_password_hash
 from myapp.config import init_username, init_password
-from myapp import create_app, db, User
+from myapp import create_app, db, User, generate_nonce
 from myapp.function.basic import app_logger
 
 app = create_app()
@@ -21,6 +21,21 @@ with app.app_context():
         app_logger.debug(f"User '{init_username}' created with hashed password.")
     else:
         app_logger.debug(f"User '{init_username}' already exists.")
+
+# 注册钩子
+app.before_request(generate_nonce)
+
+@app.after_request
+def add_csp(response):
+    # 将 nonce 添加到 CSP 头
+    csp = (
+        "default-src 'self'; "
+        "script-src 'self' 'nonce-{nonce}'; "
+        "img-src 'self' blob:; "
+    ).format(nonce=g.nonce)
+    response.headers['Content-Security-Policy'] = csp
+    return response
+
 
 # 配置图片的缓存控制头
 @app.after_request
@@ -81,5 +96,6 @@ app.register_blueprint(delete_blueprint)
 
 
 if __name__ == "__main__":
+    app_logger.info('程序启动')
     app.run(host='0.0.0.0', debug=True, use_reloader=False)
 

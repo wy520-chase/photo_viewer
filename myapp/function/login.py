@@ -2,10 +2,13 @@ from flask import Blueprint, redirect, url_for, flash, request, render_template
 from flask_login import login_user, logout_user
 from werkzeug.security import check_password_hash
 from myapp import User
+from myapp.function.basic import app_logger
+
 login_blueprint = Blueprint('login', __name__)
 
 @login_blueprint.route('/login', methods=['GET', 'POST'])
 def login():
+    app_logger.info('login')
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')

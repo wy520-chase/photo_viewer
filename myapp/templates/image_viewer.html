@@ -26,7 +26,7 @@
         </div>
         <img src="" alt="Right Image" class="image" id="rightImage">
     </div>
-    <script> // 将模板变量的值注入全局变量
+    <script nonce="{{ nonce }}"> // 将模板变量的值注入全局变量
         const imagesJson = {{ images_json|tojson|safe}};
         let folderName = "{{ folder_name }}"
         let currentImageIndex = {{ current_image_index }};

@@ -9,7 +9,7 @@
 </head>
 <body>
     <div class="header">
-        <a href="javascript:void(0);" onclick="history.back();" class="back-button">返回</a>
+        <a href="#" class="back-button">返回</a>
         <a href="{{ url_for('login.logout') }}" class="logout-button">注销</a>
     </div>
     <div class="content">
@@ -36,7 +36,6 @@
                 </form>
             </div>
         </div>
-
     </div>
 
 <script src="{{ url_for('static', filename='js/settings.js', v=timestamp) }}"></script>

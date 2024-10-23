@@ -2,7 +2,7 @@ import json
 import os
 import re
 from pathlib import Path
-from flask import Blueprint, request, render_template, jsonify
+from flask import Blueprint, request, render_template, jsonify, g
 from flask_login import login_required
 import myapp
 from myapp import diskio, SERVER_START_TIMESTAMP
@@ -42,7 +42,7 @@ def image_viewer():
     images_json = json.dumps(images_path)
     # app_logger.debug(f'图片查看器传递信息：current_image_index={image_id},images_json={images_json}, folder_name={folder_name}')
     return render_template('image_viewer.html', images_json=images_json, folder_name=folder_name,
-                           current_image_index=image_id, timestamp=SERVER_START_TIMESTAMP)
+                           current_image_index=image_id, timestamp=SERVER_START_TIMESTAMP, nonce=g.nonce)
 
 @image_viewer_blueprint.route('/image_viewer_recursively', methods=['GET'])
 @login_required
@@ -61,6 +61,6 @@ def image_viewer_recursively():
         images_json = json.dumps(result['images'])
         # app_logger.debug(f"来自image_viewer_recursively函数:folder_name:{result['directory']},images_json: {images_json}")
         return render_template('image_viewer.html', images_json=images_json, folder_name=result['directory'],
-                           current_image_index=0, timestamp=SERVER_START_TIMESTAMP, carousel_fps=carousel_fps, carousing = carousing)
+                           current_image_index=0, timestamp=SERVER_START_TIMESTAMP, carousel_fps=carousel_fps, carousing = carousing, nonce=g.nonce)
     else:
         return jsonify({"message": "No images found in parent or sibling directories"}), 404

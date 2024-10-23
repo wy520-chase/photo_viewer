@@ -1,27 +1,26 @@
-自制网页图片浏览器，用于浏览nas上的图片 基于python flask实现，使用docker部署
+一个使用CSP策略防范XSS的示例
 
 ## 部署步骤：
-### 1、拉取项目
-
-`git clone https://github.com/wy520-chase/photo_viewer.git`
-
-### 2、创建容器
-
+### 1、核心修改
+为所有内联脚本添加nonce
 ```
-cd photo_viewer
-docker build -t photo_viewer .
+def generate_nonce():
+    g.nonce = base64.b64encode(os.urandom(16)).decode('utf-8')
 ```
+```
+<script nonce="{{ nonce }}">
+```
+添加CSP响应头
+```
+csp = (
+        "default-src 'self'; "
+        "script-src 'self' 'nonce-{nonce}'; "
+        "img-src 'self' blob:; "
+    ).format(nonce=g.nonce)
+```
+### 2、效果验证
+攻击脚本未成功运行
+![image](https://github.com/user-attachments/assets/bc5a0514-9042-495d-9eaf-b5e99f43968c)
 
-### 3、按需修改docker-compose.yml中的密钥、密码、图片位置和端口等信息
-
-### 4、启动容器
-
-`docker-compose up -d`
-
-### 5、访问
-
-`http://your_host:8000`
-
-## 问题处理
-### 1、检查系统防火墙已放通端口
-### 2、检查容器是否正常安装启动
+### 3、遗留问题
+允许blob带来额外风险

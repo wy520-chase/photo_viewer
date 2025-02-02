@@ -3,6 +3,7 @@ import os
 import re
 import json
 import time
+import random
 from PIL import Image
 from concurrent.futures import ThreadPoolExecutor, wait, as_completed
 from threading import Lock, Thread, Semaphore
@@ -120,7 +121,8 @@ class FileTree:
         self._file_path = json_path
         self._root_directory = root_directory
         self._file_tree = {}
-        self._image_paths = []  # 存储图片路径
+        self._new_image_paths = []  # 存储新图片路径
+        self._image_paths = [] # 存储所有图片路径
         self._saved_tree = []
         self._futures = []
         # 检查缓存并加载
@@ -138,7 +140,17 @@ class FileTree:
         self._build_file_tree(self._root_directory, self._file_tree)
         time2 = time.time()
         app_logger.info(f'构建目录树耗时{(time2 - time1) * 1000:.2f} ms')
-        if self._image_paths:
+        
+        # 收集所有图片路径
+        app_logger.info('开始收集图片路径')
+        time1 = time.time()
+        self._collect_image_paths(self._file_tree, '')
+        time2 = time.time()
+        app_logger.info(f'收集图片路径耗时{(time2 - time1) * 1000:.2f} ms')
+        
+
+        
+        if self._new_image_paths:
             # 有要更新的数据，启动异步更新线程
             updater_thread = Thread(target=self._update_and_save_async)
             updater_thread.start()
@@ -196,19 +208,19 @@ class FileTree:
             local_updates = {key: local_updates[key] for key in sorted(local_updates, key=natural_sort_key)}
             with self._lock:
                 current_tree.update(local_updates)
-                self._image_paths.extend(paths_to_append)
+                self._new_image_paths.extend(paths_to_append)
 
     def _update_and_save_async(self):
         time1 = time.time()
         max_workers = 1
         wait_queue_size = 3
         local_updates = {}
-        if len(self._image_paths) < wait_queue_size:
-            wait_queue_size = len(self._image_paths)
+        if len(self._new_image_paths) < wait_queue_size:
+            wait_queue_size = len(self._new_image_paths)
         with ThreadPoolExecutor(max_workers=max_workers) as executor:
             futures = []
             # 初始提交一些任务
-            for path in self._image_paths[:wait_queue_size]:
+            for path in self._new_image_paths[:wait_queue_size]:
                 future = executor.submit(get_image_size, path)
                 futures.append(future)
             next_index = wait_queue_size
@@ -227,15 +239,15 @@ class FileTree:
                     # 移除已完成任务
                     futures = [f for f in futures if f != future]
                     # 提交新的任务以保持队列中有等待任务
-                    if next_index < len(self._image_paths):
-                        new_path = self._image_paths[next_index]
+                    if next_index < len(self._new_image_paths):
+                        new_path = self._new_image_paths[next_index]
                         new_future = executor.submit(get_image_size, new_path)
                         futures.append(new_future)
                         next_index += 1
         with self._lock:
             self._merge_updates(self._file_tree, local_updates)
         # 释放内存
-        self._image_paths = []
+        self._new_image_paths = []
         self._futures = []
         time2 = time.time()
         app_logger.info(f'更新图片信息耗时{(time2 - time1) * 1000:.2f} ms')
@@ -261,14 +273,51 @@ class FileTree:
     def read(self):
         with self._lock:
             return self._file_tree.copy()
+    
+
+    def _collect_image_paths(self, tree, current_path=''):
+        """
+        从目录树中收集所有图片路径。
+
+        :param tree: 当前的目录树
+        :param current_path: 当前路径的相对路径
+        :return: 包含所有图片路径的列表
+        """
+        for key, value in tree.items():
+            if isinstance(value, dict):
+                # 如果是子目录，递归收集路径
+                sub_path = os.path.join(current_path, key)
+                self._collect_image_paths(value, sub_path)
+            else:
+                # 如果是文件，检查是否是图片文件
+                if key.lower().endswith(('png', 'jpg', 'jpeg', 'bmp', 'gif')):
+                    image_path = os.path.join(self._root_directory, current_path, key)
+                    self._image_paths.append(image_path)
+
+    def get_random_image(self):
+        """
+        从目录树中随机获取一张图片及其尺寸信息。
+        
+        :return: 图片的绝对路径及其尺寸信息（如果已知）
+        """
+        with self._lock:
+            if not self._image_paths:
+                app_logger.info('没有可用的图片路径')
+                return None, None
+            random_image_path = random.choice(self._image_paths)
+            relative_path = os.path.relpath(random_image_path, self._root_directory)
+            return relative_path
 
 
 if __name__ == "__main__":
-    root = '../static/images'
-    file_path = '../file_tree.json'
+    root = 'myapp/static/images'
+    file_path = 'myapp/file_tree.json'
     filetree = FileTree(file_path, root)
     # 获取目录树
     file_tree = filetree.read()
-    s = get_cached_info('捕获.PNG', file_tree)
+    s = get_cached_info('潘塔纳尔湿地，巴西 ©.jpg', file_tree)
     app_logger.info(f'主函数运行结果{s}')
     time.sleep(2)
+    # 随机获取一张图片
+    for i in range(10):
+        print('随机获取一张图片', filetree.get_random_image())

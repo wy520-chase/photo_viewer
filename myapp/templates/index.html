@@ -44,8 +44,11 @@
         <div class="sub-container">
         </div>
     </div>
-    <a href="{{ url_for('settings.settings') }}" class="settings-button">
+    <a href="{{ url_for('index_button.settings') }}" class="settings-button">
         ⚙️
+    </a>
+    <a href="{{ url_for('index_button.random', url_path='random')}}" class="random-button">
+        ✨
     </a>
     <script>
         const items = {{ items|tojson|safe }};

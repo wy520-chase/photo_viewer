@@ -332,6 +332,15 @@ class DiskIO:
             app_logger.info(f"项目不在字典里: {path_relative_root}")
             return False
 
+    def random_dir(self):
+        """
+        获取随机目录中的图片和子目录。
+        :return: 包含目录中的图片和子目录的字典。
+        """
+        # 随机获取一个目录
+        random_image = self._FileTree.get_random_image()
+        directory = os.path.dirname(random_image)
+        return directory
 
 
 

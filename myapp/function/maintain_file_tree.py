@@ -152,6 +152,10 @@ class FileTree:
             # 有要更新的数据，启动异步更新线程
             updater_thread = Thread(target=self._update_and_save_async)
             updater_thread.start()
+        else:
+            # 没有要更新的数据，直接保存到文件
+            print('没有要更新的数据')
+            self._save_to_file()
 
     def _build_file_tree(self, node_path, node_tree):
         stack = [(node_path, node_tree)]

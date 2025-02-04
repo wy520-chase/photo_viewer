@@ -5,9 +5,7 @@ import time
 from myapp.function.disk_io import DiskIO
 from myapp.config import file_path, root, secret_key
 
-print('开始读取文件构建目录树，请等待')
 diskio = DiskIO(file_path, root)
-print('成功构建目录树')
 # 记录服务器启动时间戳
 SERVER_START_TIMESTAMP = str(int(time.time()))
 # 记录已经轮播的目录

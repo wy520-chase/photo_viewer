@@ -1,7 +1,5 @@
 import os
 
-from flask import Blueprint, request, jsonify
-from flask_login import login_required
 from myapp.config import root
 from myapp.function.basic import app_logger
 from PIL import Image
@@ -9,20 +7,7 @@ from myapp.function.maintain_file_tree import get_cached_info, FileTree
 from pathlib import Path
 import time
 
-delete_blueprint = Blueprint('delete_blueprint', __name__)
-@delete_blueprint.route('/delete', methods=['POST'])
-@login_required
-def delete():
-    """
-    删除路由，处理删除图像和删除目录的请求
-    :return: JSON 格式的响应结果
-    """
-    data = request.get_json()
-    if 'path' not in data:
-        return jsonify(success=False, message='路径不存在'), 400
-    path_relative_root = data['path']
-    success = diskio.delete_item(path_relative_root)
-    return jsonify(success=success)
+
 
 
 class DiskIO:

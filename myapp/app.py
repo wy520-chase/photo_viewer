@@ -72,11 +72,10 @@ from myapp.function.image_viewer import image_viewer_blueprint
 app.register_blueprint(image_viewer_blueprint)
 
 # 设置界面
-from myapp.function.index_button import index_button_blueprint
+from myapp.function.little_blueprint import index_button_blueprint,delete_blueprint
 app.register_blueprint(index_button_blueprint)
 
 # 删除功能
-from myapp.function.disk_io import delete_blueprint
 app.register_blueprint(delete_blueprint)
 
 

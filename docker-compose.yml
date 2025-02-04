@@ -20,3 +20,4 @@ services:
     ports:
       - "8000:8000"
     command: sh -c "gunicorn -w 4 -b 0.0.0.0:8000 myapp.app:app --preload"
+    restart: always # 添加这一行来保证容器总是重新启动

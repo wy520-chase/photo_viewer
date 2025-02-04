@@ -148,8 +148,6 @@ class FileTree:
         time2 = time.time()
         app_logger.info(f'收集图片路径耗时{(time2 - time1) * 1000:.2f} ms')
         
-
-        
         if self._new_image_paths:
             # 有要更新的数据，启动异步更新线程
             updater_thread = Thread(target=self._update_and_save_async)
@@ -211,6 +209,8 @@ class FileTree:
                 self._new_image_paths.extend(paths_to_append)
 
     def _update_and_save_async(self):
+        print('开始异步更新图片信息并保存')
+        app_logger.info(f'开始异步更新图片信息')
         time1 = time.time()
         max_workers = 1
         wait_queue_size = 3
@@ -253,6 +253,7 @@ class FileTree:
         app_logger.info(f'更新图片信息耗时{(time2 - time1) * 1000:.2f} ms')
         # 保存到文件
         self._save_to_file()
+        print(f'异步更新图片信息并保存完成')
 
     def _merge_updates(self, tree, updates):
         for key, value in updates.items():
@@ -263,6 +264,7 @@ class FileTree:
                 tree[key] = value
 
     def _save_to_file(self):
+        app_logger.info(f'开始保存结果到文件')
         time1 = time.time()
         with open(self._file_path, 'w', encoding='utf-8') as f:
             with self._lock:

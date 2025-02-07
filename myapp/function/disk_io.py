@@ -319,14 +319,9 @@ class DiskIO:
 
     def random_dir(self):
         """
-        获取随机目录中的图片和子目录。
-        :return: 包含目录中的图片和子目录的字典。
+        :return: 一个随机目录的路径。
         """
-        # 随机获取一个目录
-        random_image = self._FileTree.get_random_image()
-        directory = os.path.dirname(random_image)
-        return directory
-
+        return self._FileTree.random_directory()
 
 
 

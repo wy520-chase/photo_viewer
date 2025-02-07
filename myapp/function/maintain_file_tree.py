@@ -4,6 +4,7 @@ import re
 import json
 import time
 import random
+import bisect
 from PIL import Image
 from concurrent.futures import ThreadPoolExecutor, wait, as_completed
 from threading import Lock, Thread, Semaphore
@@ -120,33 +121,34 @@ class FileTree:
         self._lock = Lock()
         self._file_path = json_path
         self._root_directory = root_directory
-        self._file_tree = {}
+        self._file_tree = {}  # 存储文件树
         self._new_image_paths = []  # 存储新图片路径
-        self._image_paths = [] # 存储所有图片路径
-        self._saved_tree = []
-        self._futures = []
+        self._saved_tree = []  # 存储缓存数据
+        self._futures = []  # 存储异步任务
         # 检查缓存并加载
-        
         if os.path.isfile(json_path):
-            app_logger.info('发现缓存的数据，开始读取')
+            print('发现缓存的数据，开始读取')
             time1 = time.time()
             with open(json_path, 'r', encoding='utf-8') as file:
                 self._saved_tree = json.load(file)
             time2 = time.time()
-            app_logger.info(f'读取缓存数据耗时{(time2 - time1) * 1000:.2f} ms')
+            print(f'读取缓存数据耗时{(time2 - time1) * 1000:.2f} ms')
         # 构建目录结构
-        app_logger.info('开始读取目录结构')
+        print('开始读取目录结构')
         time1 = time.time()
         self._build_file_tree(self._root_directory, self._file_tree)
         time2 = time.time()
-        app_logger.info(f'构建目录树耗时{(time2 - time1) * 1000:.2f} ms')
+        print(f'构建目录树耗时{(time2 - time1) * 1000:.2f} ms')
         
-        # 收集所有图片路径
-        app_logger.info('开始收集图片路径')
+        # 收集所有图片路径并计算随机概率
+        print('开始收集图片路径并计算随机概率')
         time1 = time.time()
-        self._collect_image_paths(self._file_tree, '')
+        # 预计算所有直接包含图片的目录及其图片数量
+        self.directories = self._precompute_directories(self._file_tree)
+        # 计算累积概率分布
+        self.cumulative_probabilities, self.directory_list = self._compute_cumulative_probabilities(self.directories)
         time2 = time.time()
-        app_logger.info(f'收集图片路径耗时{(time2 - time1) * 1000:.2f} ms')
+        print(f'收集图片路径耗时{(time2 - time1) * 1000:.2f} ms')
         
         if self._new_image_paths:
             # 有要更新的数据，启动异步更新线程
@@ -214,9 +216,8 @@ class FileTree:
 
     def _update_and_save_async(self):
         print('开始异步更新图片信息并保存')
-        app_logger.info(f'开始异步更新图片信息')
         time1 = time.time()
-        max_workers = 1
+        max_workers = os.cpu_count()
         wait_queue_size = 3
         local_updates = {}
         if len(self._new_image_paths) < wait_queue_size:
@@ -254,10 +255,9 @@ class FileTree:
         self._new_image_paths = []
         self._futures = []
         time2 = time.time()
-        app_logger.info(f'更新图片信息耗时{(time2 - time1) * 1000:.2f} ms')
+        print(f'更新图片信息耗时{(time2 - time1) * 1000:.2f} ms')
         # 保存到文件
         self._save_to_file()
-        print(f'异步更新图片信息并保存完成')
 
     def _merge_updates(self, tree, updates):
         for key, value in updates.items():
@@ -268,62 +268,67 @@ class FileTree:
                 tree[key] = value
 
     def _save_to_file(self):
-        app_logger.info(f'开始保存结果到文件')
+        print(f'开始保存结果到文件')
         time1 = time.time()
         with open(self._file_path, 'w', encoding='utf-8') as f:
             with self._lock:
                 json.dump(self._file_tree, f, ensure_ascii=False, indent=4)
         time2 = time.time()
-        app_logger.info(f'保存结果到文件耗时{(time2 - time1) * 1000:.2f} ms')
+        print(f'保存结果到文件耗时{(time2 - time1) * 1000:.2f} ms')
 
     def read(self):
         with self._lock:
             return self._file_tree.copy()
     
-
-    def _collect_image_paths(self, tree, current_path=''):
-        """
-        从目录树中收集所有图片路径。
-
-        :param tree: 当前的目录树
-        :param current_path: 当前路径的相对路径
-        :return: 包含所有图片路径的列表
-        """
+    # 获取所有包含图片的目录及其图片数量
+    def _precompute_directories(self, tree, current_path=""):
+        directories = {}
         for key, value in tree.items():
             if isinstance(value, dict):
-                # 如果是子目录，递归收集路径
-                sub_path = os.path.join(current_path, key)
-                self._collect_image_paths(value, sub_path)
-            else:
-                # 如果是文件，检查是否是图片文件
-                if key.lower().endswith(('png', 'jpg', 'jpeg', 'bmp', 'gif')):
-                    image_path = os.path.join(self._root_directory, current_path, key)
-                    self._image_paths.append(image_path)
+                # 检查当前目录是否直接包含图片
+                image_count = sum(1 for k in value if isinstance(value[k], float))
+                if image_count > 0:
+                    directories[current_path + "/" + key if current_path else key] = image_count
+                # 递归检查子目录
+                directories.update(self._precompute_directories(value, current_path + "/" + key if current_path else key))
+        return directories
 
-    def get_random_image(self):
-        """
-        从目录树中随机获取一张图片及其尺寸信息。
-        
-        :return: 图片的绝对路径及其尺寸信息（如果已知）
-        """
-        with self._lock:
-            if not self._image_paths:
-                app_logger.info('没有可用的图片路径')
-                return None, None
-            random_image_path = random.choice(self._image_paths)
-            relative_path = os.path.relpath(random_image_path, self._root_directory)
-            return relative_path
+    def _compute_cumulative_probabilities(self, directories):
+        total_images = sum(directories.values())
+        if total_images == 0:
+            return [], []
+        # 计算累积概率
+        cumulative_probabilities = []
+        directory_list = []
+        cumulative_sum = 0
+        for directory, count in directories.items():
+            cumulative_sum += count / total_images
+            cumulative_probabilities.append(cumulative_sum)
+            directory_list.append(directory)
+        return cumulative_probabilities, directory_list
+    
+    # 获取随机图片路径
+    def random_directory(self):
+        if not self.cumulative_probabilities:
+            return None
+        # 使用二分查找快速选择目录
+        random_value = random.random()
+        index = bisect.bisect_left(self.cumulative_probabilities, random_value)
+        return self.directory_list[index]
 
 
 if __name__ == "__main__":
     root = 'myapp/static/images'
     file_path = 'myapp/file_tree.json'
-    filetree = FileTree(file_path, root)
+    FT = FileTree(file_path, root)
     # 获取目录树
-    file_tree = filetree.read()
-    s = get_cached_info('潘塔纳尔湿地，巴西 ©.jpg', file_tree)
-    app_logger.info(f'主函数运行结果{s}')
+    file_tree = FT.read()
     time.sleep(2)
     # 随机获取一张图片
-    for i in range(10):
-        print('随机获取一张图片', filetree.get_random_image())
+    n = 0
+    for i in range(1000):
+        r = FT.random_directory()
+        # print('随机获取一张图片', r)
+        if r == '3':
+            n += 1
+    print('3出现概率', n/1000)

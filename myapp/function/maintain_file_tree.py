@@ -139,14 +139,12 @@ class FileTree:
         self._build_file_tree(self._root_directory, self._file_tree)
         time2 = time.time()
         app_logger.info(f'构建目录树耗时{(time2 - time1) * 1000:.2f} ms')
-        
         # 收集所有图片路径并计算随机概率
         app_logger.info('开始收集图片路径并计算随机概率')
         time1 = time.time()
-        # 预计算所有直接包含图片的目录及其图片数量
-        self.directories = self._precompute_directories(self._file_tree)
-        # 计算累积概率分布
-        self.cumulative_probabilities, self.directory_list = self._compute_cumulative_probabilities(self.directories)
+        self.cumulative_probabilities = []
+        self.directory_list = []
+        self.update_cumulative_probabilities(self._file_tree)
         time2 = time.time()
         app_logger.info(f'收集图片路径耗时{(time2 - time1) * 1000:.2f} ms')
         
@@ -306,7 +304,13 @@ class FileTree:
             cumulative_probabilities.append(cumulative_sum)
             directory_list.append(directory)
         return cumulative_probabilities, directory_list
-    
+    # 重新计算累积概率分布
+    def update_cumulative_probabilities(self,tree):
+        # 计算所有直接包含图片的目录及其图片数量
+        self.directories = self._precompute_directories(tree)
+        # 计算累积概率分布
+        self.cumulative_probabilities, self.directory_list = self._compute_cumulative_probabilities(self.directories)
+
     # 获取随机图片路径
     def random_directory(self):
         if not self.cumulative_probabilities:

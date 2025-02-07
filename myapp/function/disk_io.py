@@ -299,6 +299,8 @@ class DiskIO:
                     os.rmdir(item_path)
                     app_logger.info(f"已删除目录: {path_relative_root}")
                     del current_dir[last_part]
+                    # 更新随机路径信息
+                    self._FileTree.update_cumulative_probabilities(self._file_tree)
                     return True
                 except OSError as e:
                     app_logger.error(f"删除目录失败: {path_relative_root} - {e}")

@@ -127,28 +127,28 @@ class FileTree:
         self._futures = []  # 存储异步任务
         # 检查缓存并加载
         if os.path.isfile(json_path):
-            print('发现缓存的数据，开始读取')
+            app_logger.info('发现缓存的数据，开始读取')
             time1 = time.time()
             with open(json_path, 'r', encoding='utf-8') as file:
                 self._saved_tree = json.load(file)
             time2 = time.time()
-            print(f'读取缓存数据耗时{(time2 - time1) * 1000:.2f} ms')
+            app_logger.info(f'读取缓存数据耗时{(time2 - time1) * 1000:.2f} ms')
         # 构建目录结构
-        print('开始读取目录结构')
+        app_logger.info('开始读取目录结构')
         time1 = time.time()
         self._build_file_tree(self._root_directory, self._file_tree)
         time2 = time.time()
-        print(f'构建目录树耗时{(time2 - time1) * 1000:.2f} ms')
+        app_logger.info(f'构建目录树耗时{(time2 - time1) * 1000:.2f} ms')
         
         # 收集所有图片路径并计算随机概率
-        print('开始收集图片路径并计算随机概率')
+        app_logger.info('开始收集图片路径并计算随机概率')
         time1 = time.time()
         # 预计算所有直接包含图片的目录及其图片数量
         self.directories = self._precompute_directories(self._file_tree)
         # 计算累积概率分布
         self.cumulative_probabilities, self.directory_list = self._compute_cumulative_probabilities(self.directories)
         time2 = time.time()
-        print(f'收集图片路径耗时{(time2 - time1) * 1000:.2f} ms')
+        app_logger.info(f'收集图片路径耗时{(time2 - time1) * 1000:.2f} ms')
         
         if self._new_image_paths:
             # 有要更新的数据，启动异步更新线程
@@ -156,7 +156,7 @@ class FileTree:
             updater_thread.start()
         else:
             # 没有要更新的数据，直接保存到文件
-            print('没有要更新的数据')
+            app_logger.info('没有要更新的数据')
             self._save_to_file()
 
     def _build_file_tree(self, node_path, node_tree):
@@ -215,7 +215,7 @@ class FileTree:
                 self._new_image_paths.extend(paths_to_append)
 
     def _update_and_save_async(self):
-        print('开始异步更新图片信息并保存')
+        app_logger.info('开始异步更新图片信息并保存')
         time1 = time.time()
         max_workers = os.cpu_count()
         wait_queue_size = 3
@@ -255,7 +255,7 @@ class FileTree:
         self._new_image_paths = []
         self._futures = []
         time2 = time.time()
-        print(f'更新图片信息耗时{(time2 - time1) * 1000:.2f} ms')
+        app_logger.info(f'更新图片信息耗时{(time2 - time1) * 1000:.2f} ms')
         # 保存到文件
         self._save_to_file()
 
@@ -268,13 +268,13 @@ class FileTree:
                 tree[key] = value
 
     def _save_to_file(self):
-        print(f'开始保存结果到文件')
+        app_logger.info(f'开始保存结果到文件')
         time1 = time.time()
         with open(self._file_path, 'w', encoding='utf-8') as f:
             with self._lock:
                 json.dump(self._file_tree, f, ensure_ascii=False, indent=4)
         time2 = time.time()
-        print(f'保存结果到文件耗时{(time2 - time1) * 1000:.2f} ms')
+        app_logger.info(f'保存结果到文件耗时{(time2 - time1) * 1000:.2f} ms')
 
     def read(self):
         with self._lock:
